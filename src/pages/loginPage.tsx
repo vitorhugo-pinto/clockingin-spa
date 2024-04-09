@@ -10,8 +10,28 @@ import {
 import { Label } from "@radix-ui/react-label";
 import { Input } from "@/components/ui/input";
 import { Clock } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/providers/AuthUseContext";
+import { api } from "@/lib/api";
 
 export function LoginPage() {
+  const { setToken } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogin = () => {
+    api
+      .post("/authenticate", {
+        login: "vhp1",
+        password: "youmaypass",
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          setToken(response.data.data.token);
+          navigate("/", { replace: true });
+        }
+      });
+  };
+
   return (
     <main className="bg-slate-300 w-full h-screen py-8">
       <Card className="w-1/4 h-fit mx-auto">
@@ -35,7 +55,7 @@ export function LoginPage() {
           </form>
         </CardContent>
         <CardFooter className=" justify-end">
-          <Button type="submit" className="min-w-28">
+          <Button onClick={handleLogin} type="submit" className="min-w-28">
             Log in
           </Button>
         </CardFooter>
