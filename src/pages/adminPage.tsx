@@ -8,12 +8,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Clock } from "lucide-react";
+import { Clock, Loader } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/providers/AuthUseContext";
-import { api } from "@/lib/api";
-
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { z } from "zod";
 import {
   Select,
   SelectContent,
@@ -30,6 +30,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { useCreateUser } from "@/hooks/useUsers";
 
 export function AdminPage() {
   const { clearAll, role, token } = useAuth();
@@ -41,25 +42,64 @@ export function AdminPage() {
     }
   });
 
-  const form = useForm();
+  const { mutate, isPending } = useCreateUser();
 
-  const canSelectJobType = () => {
-    // if (form.watch("role") && form.watch("role") === "EMPLOYEE") return true;
+  const formSchema = z.object({
+    name: z.string().min(2, {
+      message: "Username must be at least 2 characters.",
+    }),
+    login: z.string().min(2, {
+      message: "Username must be at least 2 characters.",
+    }),
+    password: z.string().min(2, {
+      message: "Username must be at least 2 characters.",
+    }),
+    role: z.string().min(2, {
+      message: "Username must be at least 2 characters.",
+    }),
+    jobType: z.string().min(2, {
+      message: "Username must be at least 2 characters.",
+    }),
+  });
 
-    return false;
-  };
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      login: "",
+      password: "",
+      role: "",
+      jobType: "",
+    },
+  });
 
-  const onSubmit = () => {
-    console.log(form.control._formValues);
-  };
+  function onSubmit(data: z.infer<typeof formSchema>) {
+    mutate(
+      {
+        name: data.name,
+        login: data.login,
+        password: data.password,
+        role: data.role,
+        jobType: data.jobType,
+      },
+      {
+        onSuccess: () => {
+          form.reset();
+          navigate("/admin/create-user");
+        },
+      }
+    );
+  }
 
   const handleLogout = () => {
     clearAll();
     navigate("/login", { replace: true });
   };
 
+  console.log(isPending);
+
   return (
-    <main className="bg-slate-300 w-full h-screen py-8">
+    <main className="bg-slate-300 w-full h-full py-8">
       <Card className="w-1/4 h-fit mx-auto">
         <CardHeader>
           <CardTitle className="flex gap-2">
@@ -127,10 +167,7 @@ export function AdminPage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Role</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select a role for the user" />
@@ -150,43 +187,42 @@ export function AdminPage() {
                 )}
               />
 
-              {canSelectJobType() && (
-                <FormField
-                  control={form.control}
-                  name="jobType"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Job Type</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a job type for the user" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="FULLTIME">
-                            8 hours/day journey
-                          </SelectItem>
-                          <SelectItem value="PARTTIME">
-                            6 hours/day journey
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormDescription>
-                        Select a rola for the user. This will change what
-                        feature the user will be able to use.
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
+              <FormField
+                control={form.control}
+                name="jobType"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Job Type</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a job type for the user" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="FULLTIME">
+                          8 hours/day journey
+                        </SelectItem>
+                        <SelectItem value="PARTTIME">
+                          6 hours/day journey
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>
+                      Select a rola for the user. This will change what feature
+                      the user will be able to use.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <Button type="submit" className="min-w-28">
-                Log in
+                {!isPending ? (
+                  <>Create user</>
+                ) : (
+                  <Loader className="size-5 animate-ping" />
+                )}
               </Button>
               <Button
                 onClick={handleLogout}

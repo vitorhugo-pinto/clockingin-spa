@@ -28,7 +28,6 @@ export function LoginPage() {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm<LoginType>();
 
@@ -40,7 +39,7 @@ export function LoginPage() {
     api.post("/authenticate", data).then((response) => {
       if (response.status === 200) {
         setToken(response.data.data.token);
-        navigate("/", { replace: true });
+        navigate("/admin/create-user", { replace: true });
       }
     });
   };
