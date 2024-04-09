@@ -3,7 +3,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -14,22 +13,36 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/providers/AuthUseContext";
 import { api } from "@/lib/api";
 
+import { useForm, SubmitHandler } from "react-hook-form";
+import { cn } from "@/lib/utils";
+
+type LoginType = {
+  login: string;
+  password: string;
+};
+
 export function LoginPage() {
   const { setToken } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogin = () => {
-    api
-      .post("/authenticate", {
-        login: "vhp1",
-        password: "youmaypass",
-      })
-      .then((response) => {
-        if (response.status === 200) {
-          setToken(response.data.data.token);
-          navigate("/", { replace: true });
-        }
-      });
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<LoginType>();
+
+  const onSubmit: SubmitHandler<LoginType> = (data) => {
+    handleLogin(data);
+  };
+
+  const handleLogin = (data: LoginType) => {
+    api.post("/authenticate", data).then((response) => {
+      if (response.status === 200) {
+        setToken(response.data.data.token);
+        navigate("/", { replace: true });
+      }
+    });
   };
 
   return (
@@ -43,22 +56,32 @@ export function LoginPage() {
           <CardDescription>Have a nice work day</CardDescription>
         </CardHeader>
         <CardContent>
-          <form className="flex flex-col gap-4">
+          <form
+            className="flex flex-col gap-4"
+            onSubmit={handleSubmit(onSubmit)}
+          >
             <Label htmlFor="login">Login</Label>
-            <Input id="login" type="text" placeholder="Insert login" />
+            <Input
+              {...register("login")}
+              id="login"
+              type="text"
+              placeholder="Insert login"
+              className={cn({ "border-red-500": !!errors.login })}
+            />
             <Label htmlFor="password">Password</Label>
             <Input
+              {...register("password")}
               id="password"
               type="password"
               placeholder="Insert password"
+              className={cn({ "border-red-500": !!errors.password })}
             />
+
+            <Button type="submit" className="min-w-28">
+              Log in
+            </Button>
           </form>
         </CardContent>
-        <CardFooter className=" justify-end">
-          <Button onClick={handleLogin} type="submit" className="min-w-28">
-            Log in
-          </Button>
-        </CardFooter>
       </Card>
     </main>
   );
