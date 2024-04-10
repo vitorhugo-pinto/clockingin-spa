@@ -8,7 +8,6 @@ import { AdminPage } from "./pages/adminPage";
 import { EmployeePage } from "./pages/employeePage";
 import { ErrorPage } from "./pages/errorPage";
 import { ProtectedRoute } from "./pages/protectedRoute";
-import { Logout } from "./pages/logoutPage";
 
 export const Routes = () => {
   const publicRoutes: RouteObject[] = [
@@ -32,10 +31,6 @@ export const Routes = () => {
         {
           path: "/employee",
           element: <EmployeePage />,
-        },
-        {
-          path: "/logout",
-          element: <Logout />,
         },
       ],
     },
