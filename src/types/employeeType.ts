@@ -22,5 +22,7 @@ export type summaryTypeResponse = {
   error: string
 }
 
-export type createCheckPointType = Omit<checkPoint, "id">;
-
+export type createCheckPointType = {
+  timeStamp: string,
+  lunchBreak: boolean,
+}
