@@ -13,6 +13,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
+import { useFetchSummary } from "@/hooks/useEmployee";
+import { format } from "date-fns";
 
 export function EmployeePage() {
   const { clearAll, token, role } = useAuth();
@@ -23,6 +25,8 @@ export function EmployeePage() {
       navigate("/admin/create-user");
     }
   });
+
+  const { data, isLoading } = useFetchSummary();
 
   const handleLogout = () => {
     clearAll();
@@ -39,6 +43,17 @@ export function EmployeePage() {
         <CardDescription>Create a new user</CardDescription>
       </CardHeader>
       <CardContent>
+        {format(new Date(), "dd/MM/yyyy")}
+
+        {data?.checkPoints.map((checkPoint, idx) => {
+          return (
+            <div key={idx}>
+              {/* <span>{JSON.stringify(checkPoint)}</span> */}
+              {new Date(checkPoint.timeStamp).getHours().toString()}:
+              {new Date(checkPoint.timeStamp).getMinutes().toString()}
+            </div>
+          );
+        })}
         <Button
           onClick={handleLogout}
           type="submit"
