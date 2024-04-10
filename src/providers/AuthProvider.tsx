@@ -33,6 +33,10 @@ export const AuthProvider = ({ children }: AuthContextProviderProps) => {
 
   const setToken = (newToken: string | null) => {
     setToken_(newToken);
+    if (newToken) {
+      const token = jwtDecode<tokenType>(newToken).roles[0];
+      setRole(token);
+    }
   };
 
   useEffect(() => {
