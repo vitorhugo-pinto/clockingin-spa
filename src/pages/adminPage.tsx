@@ -96,8 +96,6 @@ export function AdminPage() {
     navigate("/login", { replace: true });
   };
 
-  console.log(isPending);
-
   return (
     <main className="bg-slate-300 w-full h-full py-8">
       <Card className="w-1/4 h-fit mx-auto">

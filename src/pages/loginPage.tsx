@@ -15,6 +15,7 @@ import { api } from "@/lib/api";
 
 import { useForm, SubmitHandler } from "react-hook-form";
 import { cn } from "@/lib/utils";
+import { useEffect } from "react";
 
 type LoginType = {
   login: string;
@@ -24,6 +25,11 @@ type LoginType = {
 export function LoginPage() {
   const { setToken } = useAuth();
   const navigate = useNavigate();
+  const { clearAll } = useAuth();
+
+  useEffect(() => {
+    clearAll();
+  });
 
   const {
     register,
