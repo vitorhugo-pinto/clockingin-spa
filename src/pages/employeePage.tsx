@@ -9,13 +9,15 @@ import { ArrowLeftToLine, ArrowRightToLine, Clock, Laugh } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/providers/AuthUseContext";
 import { Button } from "@/components/ui/button";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useCheckIn, useFetchSummary } from "@/hooks/useEmployee";
-import { format, parseISO } from "date-fns";
+import { format } from "date-fns";
 
 export function EmployeePage() {
-  const { clearAll, token, role } = useAuth();
+  const { clearAll, token, role, jobType } = useAuth();
   const navigate = useNavigate();
+
+  const [lunchBreak, setLunchBreak] = useState<boolean>(false);
 
   useEffect(() => {
     if (!!token && role !== "ROLE_EMPLOYEE") {
@@ -30,7 +32,7 @@ export function EmployeePage() {
     const clockIn = format(new Date(Date.now()), "yyyy-MM-dd'T'HH:mm");
     mutate({
       timeStamp: clockIn,
-      lunchBreak: false,
+      lunchBreak,
     });
   };
 
@@ -39,7 +41,27 @@ export function EmployeePage() {
     navigate("/login", { replace: true });
   };
 
-  console.log(data?.workBalance);
+  const handleCheckLunchBreak = () => {
+    setLunchBreak((prev) => !prev);
+  };
+
+  const canUseLunchBreak = () => {
+    if (jobType && jobType !== "FULLTIME") return false;
+    if (
+      !!data?.checkPoints &&
+      data?.checkPoints.length != undefined &&
+      data.checkPoints.length >= 0
+    ) {
+      if (data.checkPoints.length == 0) return false;
+      if (data.checkPoints.length % 2 == 0) return false;
+      if (data?.checkPoints[data.checkPoints.length - 1] != undefined) {
+      }
+      if (data?.checkPoints[data.checkPoints.length - 1].lunchBreak)
+        return false;
+    }
+
+    return true;
+  };
 
   return (
     <Card className="w-1/4 h-fit mx-auto gap-2">
@@ -66,10 +88,23 @@ export function EmployeePage() {
         </div>
 
         <div className="flex flex-row gap-3 justify-evenly items-start">
-          <div>
+          <div className="flex flex-col gap-2 items-center">
             <Button onClick={handleClockIn} className="min-w-28 bg-emerald-600">
               Clock in
             </Button>
+            {canUseLunchBreak() && (
+              <div className="flex flex-row-reverse gap-1 justify-start">
+                <label htmlFor="lunchBreak" className="text-sm">
+                  Lunch break
+                </label>
+                <input
+                  id="lunchBreak"
+                  type="checkbox"
+                  onChange={handleCheckLunchBreak}
+                  checked={lunchBreak}
+                />
+              </div>
+            )}
           </div>
           <div className="flex flex-col gap-1">
             {data?.checkPoints.map((checkPoint, idx) => {

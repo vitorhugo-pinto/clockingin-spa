@@ -9,11 +9,13 @@ type AuthContextProviderProps = {
 type AuthContextType = {
   token: string | null;
   role: string | null;
+  jobType: string | null;
   clearAll: () => void;
   setToken: (token: string | null) => void;
 };
 
 type tokenType = {
+  jobType: string;
   roles: string[];
 } & JwtPayload;
 
@@ -23,19 +25,25 @@ export const AuthProvider = ({ children }: AuthContextProviderProps) => {
   const [token, setToken_] = useState(localStorage.getItem("token"));
 
   let roleFromToken: string | null;
+  let jobTypeFromToken: string | null;
   if (token != null) {
     roleFromToken = jwtDecode<tokenType>(token ?? "").roles[0];
+    jobTypeFromToken = jwtDecode<tokenType>(token ?? "").jobType;
   } else {
     roleFromToken = null;
+    jobTypeFromToken = null;
   }
 
   const [role, setRole] = useState(roleFromToken);
+  const [jobType, setJobType] = useState(jobTypeFromToken);
 
   const setToken = (newToken: string | null) => {
     setToken_(newToken);
     if (newToken) {
-      const token = jwtDecode<tokenType>(newToken).roles[0];
-      setRole(token);
+      const tokenRole = jwtDecode<tokenType>(newToken).roles[0];
+      const tokenJobType = jwtDecode<tokenType>(newToken).jobType;
+      setRole(tokenRole);
+      setJobType(tokenJobType);
     }
   };
 
@@ -59,6 +67,7 @@ export const AuthProvider = ({ children }: AuthContextProviderProps) => {
     () => ({
       token,
       role,
+      jobType,
       clearAll,
       setToken,
     }),
