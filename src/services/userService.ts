@@ -1,6 +1,5 @@
 import { User, CreateUser } from "@/types/userType";
 import { api } from "@/lib/api";
-import { AxiosError } from "axios";
 
 async function createUser(
   user: CreateUser,

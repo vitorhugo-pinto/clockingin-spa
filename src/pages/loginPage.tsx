@@ -15,8 +15,7 @@ import { api } from "@/lib/api";
 
 import { useForm, SubmitHandler } from "react-hook-form";
 import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
-import { AxiosError } from "axios";
+import { useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 
 type LoginType = {
@@ -28,8 +27,6 @@ export function LoginPage() {
   const { setToken, clearAll } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-
-  const [longinError, setLoginError] = useState();
 
   useEffect(() => {
     clearAll();
