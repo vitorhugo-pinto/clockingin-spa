@@ -49,18 +49,7 @@ $ git clone git@github.com:vitorhugo-pinto/clockingin-spa.git
 ```
 
   
-  
-
-After all, ensure to rename the .env.sample to .env.local
-This file should contain all necessary environment variables for the application to function properly.
-At this point, only the API_URL is needed
-
-In the .env.local file to run locally:
-
-VITE_API_URL=http://localhost:8080
-
-Which is the default for the API to run
-
+**After all, .env file is already in the repo with the localhost:8080 for the API to run and deal with the requests**
 
 <br />
 
