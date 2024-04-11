@@ -45,7 +45,7 @@ export function EmployeePage() {
     });
   };
 
-  const { data, isLoading } = useFetchSummary();
+  const { data } = useFetchSummary();
   const { mutate } = useCheckIn(onSuccess, onError);
 
   const handleClockIn = () => {
