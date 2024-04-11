@@ -15,7 +15,9 @@ import { api } from "@/lib/api";
 
 import { useForm, SubmitHandler } from "react-hook-form";
 import { cn } from "@/lib/utils";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { AxiosError } from "axios";
+import { useToast } from "@/components/ui/use-toast";
 
 type LoginType = {
   login: string;
@@ -23,9 +25,11 @@ type LoginType = {
 };
 
 export function LoginPage() {
-  const { setToken } = useAuth();
+  const { setToken, clearAll } = useAuth();
   const navigate = useNavigate();
-  const { clearAll } = useAuth();
+  const { toast } = useToast();
+
+  const [longinError, setLoginError] = useState();
 
   useEffect(() => {
     clearAll();
@@ -42,12 +46,21 @@ export function LoginPage() {
   };
 
   const handleLogin = (data: LoginType) => {
-    api.post("/authenticate", data).then((response) => {
-      if (response.status === 200) {
-        setToken(response.data.data.token);
-        navigate("/admin/create-user", { replace: true });
-      }
-    });
+    api
+      .post("/authenticate", data)
+      .then((response) => {
+        if (response.status === 200) {
+          setToken(response.data.data.token);
+          navigate("/admin/create-user", { replace: true });
+        }
+      })
+      .catch(({ response }) => {
+        toast({
+          variant: "destructive",
+          title: response.data.message,
+          description: "You might have a typo",
+        });
+      });
   };
 
   return (

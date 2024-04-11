@@ -9,3 +9,7 @@ export type User = {
 }
 
 export type CreateUser = Omit<User, "id" | "createdAt">
+
+export type Token = {
+  token: string;
+}
