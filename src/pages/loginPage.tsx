@@ -62,7 +62,7 @@ export function LoginPage() {
 
   return (
     <main className="bg-slate-300 w-full h-screen py-8">
-      <Card className="w-1/4 h-fit mx-auto">
+      <Card className="w-1/4 min-w-fit h-fit mx-auto">
         <CardHeader>
           <CardTitle className="flex gap-2">
             <Clock className="size-6 text-emerald-500" />
