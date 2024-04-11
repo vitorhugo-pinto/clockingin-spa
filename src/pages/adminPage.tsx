@@ -31,10 +31,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useCreateUser } from "@/hooks/useUsers";
+import { AxiosError } from "axios";
+import { useToast } from "@/components/ui/use-toast";
 
 export function AdminPage() {
   const { clearAll, role, token } = useAuth();
   const navigate = useNavigate();
+
+  const { toast } = useToast();
 
   useEffect(() => {
     if (!!token && role !== "ROLE_ADMIN") {
@@ -42,7 +46,23 @@ export function AdminPage() {
     }
   });
 
-  const { mutate, isPending } = useCreateUser();
+  const onSuccess = () => {
+    toast({
+      variant: "default",
+      title: "User was created! :)",
+      description: "You might have a typo",
+    });
+  };
+
+  const onError = (error: AxiosError) => {
+    toast({
+      variant: "destructive",
+      title: error.message,
+      description: "Something spaghetti happened",
+    });
+  };
+
+  const { mutate, isPending } = useCreateUser(onSuccess, onError);
 
   const formSchema = z.object({
     name: z.string().min(2, {
@@ -177,7 +197,7 @@ export function AdminPage() {
                       </SelectContent>
                     </Select>
                     <FormDescription>
-                      Select a rola for the user. This will change what feature
+                      Select a role for the user. This will change what feature
                       the user will be able to use.
                     </FormDescription>
                     <FormMessage />
@@ -207,8 +227,7 @@ export function AdminPage() {
                       </SelectContent>
                     </Select>
                     <FormDescription>
-                      Select a rola for the user. This will change what feature
-                      the user will be able to use.
+                      Select a work journey for your employee.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

@@ -12,10 +12,14 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { useCheckIn, useFetchSummary } from "@/hooks/useEmployee";
 import { format } from "date-fns";
+import { Clocker } from "@/components/clocker";
+import { useToast } from "@/components/ui/use-toast";
+import { AxiosError } from "axios";
 
 export function EmployeePage() {
   const { clearAll, token, role, jobType } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const [lunchBreak, setLunchBreak] = useState<boolean>(false);
 
@@ -25,8 +29,24 @@ export function EmployeePage() {
     }
   });
 
+  const onSuccess = () => {
+    toast({
+      variant: "default",
+      title: "Checked in!",
+      description: "Have a nice day",
+    });
+  };
+
+  const onError = (error: AxiosError) => {
+    toast({
+      variant: "destructive",
+      title: error.message,
+      description: "Something spaghetti happened",
+    });
+  };
+
   const { data, isLoading } = useFetchSummary();
-  const { mutate } = useCheckIn();
+  const { mutate } = useCheckIn(onSuccess, onError);
 
   const handleClockIn = () => {
     const clockIn = format(new Date(Date.now()), "yyyy-MM-dd'T'HH:mm");
@@ -64,7 +84,7 @@ export function EmployeePage() {
   };
 
   return (
-    <Card className="w-1/4 h-fit mx-auto gap-2">
+    <Card className="w-1/4 h-fit mx-auto gap-2 mt-10">
       <CardHeader>
         <CardTitle className="flex gap-2">
           <Clock className="size-6 text-emerald-500" />
@@ -89,6 +109,7 @@ export function EmployeePage() {
 
         <div className="flex flex-row gap-3 justify-evenly items-start">
           <div className="flex flex-col gap-2 items-center">
+            <Clocker />
             <Button onClick={handleClockIn} className="min-w-28 bg-emerald-600">
               Clock in
             </Button>

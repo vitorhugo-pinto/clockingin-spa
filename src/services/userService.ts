@@ -1,16 +1,12 @@
 import { User, CreateUser } from "@/types/userType";
 import { api } from "@/lib/api";
+import { AxiosError } from "axios";
 
 async function createUser(
   user: CreateUser,
-): Promise<User | null> {
-  try {
-    const response = await api.post<User>("/user", user);
-    return response.data;
-  } catch (err) {
-    console.log(err);
-    return null;
-  }
+): Promise<User> {
+  const response = await api.post<User>("/user", user);
+  return response.data;
 }
 
 export const userService = {
