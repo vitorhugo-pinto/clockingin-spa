@@ -118,7 +118,7 @@ export function AdminPage() {
 
   return (
     <main className="bg-slate-300 w-full h-full py-8">
-      <Card className="w-1/4 h-fit mx-auto">
+      <Card className="w-fit min-w-80 h-fit mx-auto">
         <CardHeader>
           <CardTitle className="flex gap-2">
             <Clock className="size-6 text-emerald-500" />

@@ -84,7 +84,7 @@ export function EmployeePage() {
   };
 
   return (
-    <Card className="w-1/4 h-fit mx-auto gap-2 mt-10">
+    <Card className="w-1/4 min-w-fit h-fit mx-auto gap-2 mt-10">
       <CardHeader>
         <CardTitle className="flex gap-2">
           <Clock className="size-6 text-emerald-500" />
