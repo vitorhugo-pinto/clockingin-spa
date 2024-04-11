@@ -78,17 +78,27 @@ export function LoginPage() {
             className="flex flex-col gap-4"
             onSubmit={handleSubmit(onSubmit)}
           >
-            <Label htmlFor="login">Login</Label>
+            <Label
+              htmlFor="login"
+              className={cn({ "text-red-500": !!errors.login })}
+            >
+              Login
+            </Label>
             <Input
-              {...register("login")}
+              {...register("login", { required: true })}
               id="login"
               type="text"
               placeholder="Insert login"
               className={cn({ "border-red-500": !!errors.login })}
             />
-            <Label htmlFor="password">Password</Label>
+            <Label
+              htmlFor="password"
+              className={cn({ "text-red-500": !!errors.password })}
+            >
+              Password
+            </Label>
             <Input
-              {...register("password")}
+              {...register("password", { required: true })}
               id="password"
               type="password"
               placeholder="Insert password"
